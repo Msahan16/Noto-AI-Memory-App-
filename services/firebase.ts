@@ -22,6 +22,24 @@ const firebaseConfig = {
   databaseURL: process.env.EXPO_PUBLIC_FIREBASE_DATABASE_URL,
 };
 
+const requiredKeys: Array<keyof typeof firebaseConfig> = [
+  'apiKey',
+  'authDomain',
+  'projectId',
+  'storageBucket',
+  'messagingSenderId',
+  'appId',
+];
+
+const missingKeys = requiredKeys.filter((key) => !firebaseConfig[key]);
+if (missingKeys.length > 0) {
+  throw new Error(
+    `Missing Firebase env vars: ${missingKeys
+      .map((key) => `EXPO_PUBLIC_FIREBASE_${key.replace(/([A-Z])/g, '_$1').toUpperCase()}`)
+      .join(', ')}. Add them to .env and restart Expo.`,
+  );
+}
+
 const firebaseApp = initializeApp(firebaseConfig);
 
 let auth: Auth;
